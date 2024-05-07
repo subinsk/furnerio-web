@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 };
 
 async function getCategories() {
+  if (!API_URL) return [];
+
   const res = await fetch(`${API_URL}/category`);
 
   if (!res.ok) {
