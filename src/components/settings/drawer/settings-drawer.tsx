@@ -14,11 +14,11 @@ import Iconify from "../../iconify";
 import Scrollbar from "../../scrollbar";
 //
 import { useSettingsContext } from "../context";
-import BaseOptions from "./base-option";
 import LayoutOptions from "./layout-options";
 import PresetsOptions from "./presets-options";
 import StretchOptions from "./stretch-options";
 import FullScreenOption from "./fullscreen-option";
+// import BaseOptions from "./base-option";
 
 // ----------------------------------------------------------------------
 
@@ -58,52 +58,52 @@ export default function SettingsDrawer() {
     </Stack>
   );
 
-  const renderMode = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Mode
-      </Typography>
+  // const renderMode = (
+  //   <div>
+  //     <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
+  //       Mode
+  //     </Typography>
 
-      <BaseOptions
-        value={settings.themeMode}
-        onChange={(newValue) => settings.onUpdate("themeMode", newValue)}
-        options={["light", "dark"]}
-        icons={["sun", "moon"]}
-      />
-    </div>
-  );
+  //     <BaseOptions
+  //       value={settings.themeMode}
+  //       onChange={(newValue) => settings.onUpdate("themeMode", newValue)}
+  //       options={["light", "dark"]}
+  //       icons={["sun", "moon"]}
+  //     />
+  //   </div>
+  // );
 
-  const renderContrast = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Contrast
-      </Typography>
+  // const renderContrast = (
+  //   <div>
+  //     <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
+  //       Contrast
+  //     </Typography>
 
-      <BaseOptions
-        value={settings.themeContrast}
-        onChange={(newValue) => settings.onUpdate("themeContrast", newValue)}
-        options={["default", "bold"]}
-        icons={["contrast", "contrast_bold"]}
-      />
-    </div>
-  );
+  //     <BaseOptions
+  //       value={settings.themeContrast}
+  //       onChange={(newValue) => settings.onUpdate("themeContrast", newValue)}
+  //       options={["default", "bold"]}
+  //       icons={["contrast", "contrast_bold"]}
+  //     />
+  //   </div>
+  // );
 
-  const renderDirection = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Direction
-      </Typography>
+  // const renderDirection = (
+  //   <div>
+  //     <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
+  //       Direction
+  //     </Typography>
 
-      <BaseOptions
-        value={settings.themeDirection as string}
-        onChange={(newValue: string) =>
-          settings.onUpdate("themeDirection", newValue)
-        }
-        options={["ltr", "rtl"]}
-        icons={["align_left", "align_right"]}
-      />
-    </div>
-  );
+  //     <BaseOptions
+  //       value={settings.themeDirection as string}
+  //       onChange={(newValue: string) =>
+  //         settings.onUpdate("themeDirection", newValue)
+  //       }
+  //       options={["ltr", "rtl"]}
+  //       icons={["align_left", "align_right"]}
+  //     />
+  //   </div>
+  // );
 
   const renderLayout = (
     <div>
@@ -181,11 +181,11 @@ export default function SettingsDrawer() {
 
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3 }}>
-          {renderMode}
+          {/* {renderMode}
 
           {renderContrast}
 
-          {renderDirection}
+          {renderDirection} */}
 
           {renderLayout}
 

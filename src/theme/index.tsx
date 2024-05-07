@@ -47,7 +47,7 @@ export default function ThemeProvider({
 
   const directionOption = direction(settings.themeDirection);
 
-  const baseOption = useMemo(
+  const baseOption: any = useMemo(
     () => ({
       palette: palette("light"),
       shadows: shadows("light"),

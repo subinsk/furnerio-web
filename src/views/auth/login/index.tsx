@@ -21,7 +21,7 @@ import { PATH_AFTER_LOGIN } from "@/config";
 // hooks
 import { useBoolean } from "@/hooks/use-boolean";
 // auth
-import { signIn } from "next-auth/react";
+// import { signIn } from "next-auth/react";
 // components
 import Iconify from "@/components/iconify";
 import FormProvider, { RHFTextField } from "@/components/hook-form";
@@ -66,15 +66,15 @@ export default function LoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
+      // const response = await signIn("credentials", {
+      //   email: data.email,
+      //   password: data.password,
+      //   redirect: false,
+      // });
 
-      if (response?.error !== null) {
-        throw new Error(response?.error);
-      }
+      // if (response?.error !== null) {
+      //   throw new Error(response?.error);
+      // }
 
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
@@ -86,7 +86,7 @@ export default function LoginView() {
 
   const handleGoogleLogin = async () => {
     try {
-      signIn("google");
+      // signIn("google");
     } catch (error) {
       console.error(error);
     }
@@ -94,7 +94,7 @@ export default function LoginView() {
 
   const handleGithubLogin = async () => {
     try {
-      signIn("github");
+      // signIn("github");
     } catch (error) {
       console.error(error);
     }

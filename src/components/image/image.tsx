@@ -78,7 +78,7 @@ const Image = forwardRef<HTMLSpanElement, ImageProps>(
     const content = (
       <Box
         component={LazyLoadImage}
-        //
+        // @ts-ignore
         alt={alt}
         src={src}
         afterLoad={afterLoad}

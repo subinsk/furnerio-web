@@ -6,7 +6,14 @@ export function loadingButton(theme: any) {
   return {
     MuiLoadingButton: {
       styleOverrides: {
-        root: ({ ownerState }) => ({
+        root: ({
+          ownerState,
+        }: {
+          ownerState: {
+            variant: string;
+            size: string;
+          };
+        }) => ({
           ...(ownerState.variant === "soft" && {
             [`& .${loadingButtonClasses.loadingIndicatorStart}`]: {
               left: 10,

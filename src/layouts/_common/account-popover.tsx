@@ -17,7 +17,7 @@ import { varHover } from "@/components/animate";
 import { useSnackbar } from "@/components/snackbar";
 import CustomPopover, { usePopover } from "@/components/custom-popover";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       // await logout();
-      await signOut();
+      // await signOut();
       popover.onClose();
       router.replace("/");
     } catch (error) {
