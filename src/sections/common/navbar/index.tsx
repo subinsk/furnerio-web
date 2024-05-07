@@ -1,4 +1,7 @@
+// "use client";
+
 import Logo from "@/components/logo";
+import { AccountPopover } from "@/layouts/_common";
 import { NextLinkComposed } from "@/routes/components/router-link";
 import {
   AppBar,
@@ -20,6 +23,7 @@ export default function Navbar({ categories }: { categories: any[] }) {
               <Stack direction="row" alignItems="center" width="100%">
                 <Logo />
                 <Box sx={{ flexGrow: 1 }} />
+                {/* <AccountPopover /> */}
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Button
                     component={NextLinkComposed}

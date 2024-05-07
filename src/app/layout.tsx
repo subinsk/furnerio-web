@@ -4,6 +4,7 @@ import "./globals.css";
 import RootLayout from "@/layouts/root-layout";
 import Script from "next/script";
 import { API_URL } from "@/config";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,15 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
+  const session = await auth();
+
+  if (session?.user) {
+    session.user = {
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+    };
+  }
 
   return (
     <html lang="en">
