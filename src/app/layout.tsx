@@ -12,24 +12,24 @@ export const metadata: Metadata = {
   description: "Furnerio",
 };
 
-// async function getCategories() {
-//   if (!API_URL) return [];
+async function getCategories() {
+  if (!API_URL) return [];
 
-//   const res = await fetch(`${API_URL}/category`);
+  const res = await fetch(`${API_URL}/category`);
 
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch data");
-//   }
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
 
-//   return res.json();
-// }
+  return res.json();
+}
 
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const categories = await getCategories();
+  const categories = await getCategories();
 
   return (
     <html lang="en">
