@@ -57,28 +57,7 @@ export function useNavData() {
       // ----------------------------------------------------------------------
       {
         subheader: " ",
-        items: [
-          {
-            title: "Dashboard",
-            path: paths.dashboard.root,
-            icon: ICONS.dashboard,
-          },
-          {
-            title: "Categories",
-            path: paths.dashboard.categories.root,
-            icon: ICONS.label,
-          },
-          {
-            title: "Products",
-            path: paths.dashboard.products.root,
-            icon: ICONS.product,
-          },
-          {
-            title: "Orders",
-            path: paths.dashboard.orders.root,
-            icon: ICONS.order,
-          },
-        ],
+        items: [],
       },
     ],
     []
