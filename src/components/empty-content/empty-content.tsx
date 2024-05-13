@@ -21,7 +21,7 @@ export default function EmptyContent({
   action?: any;
   filled: boolean;
   description?: string;
-  sx: object;
+  sx?: object;
 }) {
   return (
     <Stack

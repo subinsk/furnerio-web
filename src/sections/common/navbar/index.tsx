@@ -1,13 +1,17 @@
 // "use client";
 
+import Iconify from "@/components/iconify";
 import Logo from "@/components/logo";
 import { AccountPopover } from "@/layouts/_common";
+import { RouterLink } from "@/routes/components";
 import { NextLinkComposed } from "@/routes/components/router-link";
+import { paths } from "@/routes/paths";
 import {
   AppBar,
   Box,
   Button,
   Container,
+  IconButton,
   Link,
   Stack,
   Toolbar,
@@ -25,20 +29,30 @@ export default function Navbar({ categories }: { categories: any[] }) {
                 <Box sx={{ flexGrow: 1 }} />
                 {/* <AccountPopover /> */}
                 <Stack direction="row" alignItems="center" spacing={2}>
-                  <Button
-                    component={NextLinkComposed}
-                    to={{ pathname: "/auth/signup" }}
-                    variant="outlined"
-                  >
-                    Signup
-                  </Button>
-                  <Button
-                    component={NextLinkComposed}
-                    to={{ pathname: "/auth/login" }}
-                    variant="contained"
-                  >
-                    Login
-                  </Button>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <IconButton
+                      LinkComponent={RouterLink}
+                      href={paths.cart.root}
+                    >
+                      <Iconify icon="tabler:shopping-cart" />
+                    </IconButton>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button
+                      component={NextLinkComposed}
+                      to={{ pathname: "/auth/signup" }}
+                      variant="outlined"
+                    >
+                      Signup
+                    </Button>
+                    <Button
+                      component={NextLinkComposed}
+                      to={{ pathname: "/auth/login" }}
+                      variant="contained"
+                    >
+                      Login
+                    </Button>
+                  </Stack>
                 </Stack>
               </Stack>
               <Stack
