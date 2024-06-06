@@ -1,3 +1,5 @@
+"use client";
+
 import { m } from "framer-motion";
 // @mui
 import { alpha } from "@mui/material/styles";
@@ -17,7 +19,8 @@ import { varHover } from "@/components/animate";
 import { useSnackbar } from "@/components/snackbar";
 import CustomPopover, { usePopover } from "@/components/custom-popover";
 import { useRouter } from "next/navigation";
-// import { signOut } from "next-auth/react";
+import useGetUser from "@/hooks/use-get-user";
+import { signOut } from "@/lib/supabase/actions/logout";
 
 // ----------------------------------------------------------------------
 
@@ -30,19 +33,13 @@ const OPTIONS = [
     label: "Profile",
     linkTo: "/dashboard/user/profile",
   },
-  {
-    label: "Settings",
-    linkTo: "/dashboard/user/settings",
-  },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const router = useRouter();
-
-  const { user } = useMockedUser();
-
+  const user = useGetUser();
   const { enqueueSnackbar } = useSnackbar();
 
   const popover = usePopover();
@@ -50,7 +47,7 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       // await logout();
-      // await signOut();
+      await signOut();
       popover.onClose();
       router.replace("/");
     } catch (error) {
@@ -83,8 +80,8 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
+          src={user?.user_metadata?.avatar_url}
+          alt={user?.user_metadata?.name}
           sx={{
             width: 36,
             height: 36,
@@ -100,7 +97,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.user_metadata?.name}
           </Typography>
 
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>

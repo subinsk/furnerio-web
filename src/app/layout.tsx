@@ -40,7 +40,7 @@ export default async function Layout({
         />
       </head>
       <body className={inter.className}>
-        <RootLayout categories={categories.categories}>{children}</RootLayout>
+        <RootLayout categories={categories.data}>{children}</RootLayout>
       </body>
     </html>
   );

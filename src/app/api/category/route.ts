@@ -1,37 +1,61 @@
 import { prisma } from "@/lib";
-import { validateApiRequest } from "@/lib/validate-api-request";
-import { slugify } from "@/utils/slugify";
+import sendResponse from "@/lib/response";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const categories = await prisma.category.findMany();
-
-  return Response.json({
-    success: true,
-    categories,
-  });
-}
-
-export async function POST(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const res: any = await validateApiRequest(request);
+    const searchParams = request.nextUrl.searchParams
+    const slug = searchParams.get('slug')
+    const id = searchParams.get('id')
 
-    const createResponse = await prisma.category.create({
-      data: {
-        name: res.name,
-        description: res.description,
-        image: res.image,
-        slug: slugify(res.name),
-      },
-    });
+    let categories: any = []
 
-    return Response.json({
+    if (slug) {
+      categories = await prisma.category.findUnique({
+        where: {
+          slug: slug
+        },
+        include: {
+          subCategories: true,
+          parent: true
+        }
+      });
+    }
+    else if (id) {
+      categories = await prisma.category.findUnique({
+        where: {
+          id: id
+        },
+        include: {
+          subCategories: true,
+          parent: true
+        }
+      });
+    }
+    else {
+      categories = await prisma.category.findMany({
+        include: {
+          parent: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      });
+    }
+
+    return sendResponse({
+      data: categories,
       success: true,
-      data: createResponse,
-    });
-  } catch (e: any) {
-    return Response.json({
+      message: 'Categories fetched successfully'
+    })
+  }
+  catch (e: any) {
+    return sendResponse({
+      data: e.message,
       success: false,
-      message: e.message,
-    });
+      message: 'Failed to fetch categories'
+    })
   }
 }

@@ -15,8 +15,8 @@ export default function RHFAutocomplete({
 }: {
   name: string;
   label: string;
-  placeholder: string;
-  helperText: string;
+  placeholder?: string;
+  helperText?: string;
   [key: string]: any;
 }) {
   const { control, setValue } = useFormContext();

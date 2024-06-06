@@ -21,7 +21,7 @@ export default function CustomBreadcrumbs({
 }: {
   links: any;
   action: any;
-  heading: string;
+  heading?: string;
   moreLink: any;
   activeLast?: boolean;
   sx?: any;

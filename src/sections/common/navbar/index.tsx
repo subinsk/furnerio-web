@@ -2,12 +2,15 @@
 
 import Iconify from "@/components/iconify";
 import Logo from "@/components/logo";
+import useCartContext from "@/hooks/use-cart-context";
+import useGetUser from "@/hooks/use-get-user";
 import { AccountPopover } from "@/layouts/_common";
 import { RouterLink } from "@/routes/components";
 import { NextLinkComposed } from "@/routes/components/router-link";
 import { paths } from "@/routes/paths";
 import {
   AppBar,
+  Badge,
   Box,
   Button,
   Container,
@@ -18,41 +21,56 @@ import {
 } from "@mui/material";
 
 export default function Navbar({ categories }: { categories: any[] }) {
+  // hooks
+  const { cart } = useCartContext();
+  const user = useGetUser();
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        sx={{
+          bgcolor: "background.paper",
+        }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Stack width="100%" px={2} py={2}>
               <Stack direction="row" alignItems="center" width="100%">
                 <Logo />
                 <Box sx={{ flexGrow: 1 }} />
-                {/* <AccountPopover /> */}
+
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <IconButton
                       LinkComponent={RouterLink}
                       href={paths.cart.root}
                     >
-                      <Iconify icon="tabler:shopping-cart" />
+                      <Badge badgeContent={cart.length} color="primary">
+                        <Iconify icon="tabler:shopping-cart" />
+                      </Badge>
                     </IconButton>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Button
-                      component={NextLinkComposed}
-                      to={{ pathname: "/auth/signup" }}
-                      variant="outlined"
-                    >
-                      Signup
-                    </Button>
-                    <Button
-                      component={NextLinkComposed}
-                      to={{ pathname: "/auth/login" }}
-                      variant="contained"
-                    >
-                      Login
-                    </Button>
-                  </Stack>
+                  {user ? (
+                    <AccountPopover />
+                  ) : (
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Button
+                        component={NextLinkComposed}
+                        to={{ pathname: "/auth/signup" }}
+                        variant="outlined"
+                      >
+                        Signup
+                      </Button>
+                      <Button
+                        component={NextLinkComposed}
+                        to={{ pathname: "/auth/login" }}
+                        variant="contained"
+                      >
+                        Login
+                      </Button>
+                    </Stack>
+                  )}
                 </Stack>
               </Stack>
               <Stack
@@ -63,7 +81,7 @@ export default function Navbar({ categories }: { categories: any[] }) {
                 py={2}
               >
                 {categories
-                  .filter((item) => {
+                  ?.filter((item) => {
                     return item.parentId === null;
                   })
                   .map((category) => (

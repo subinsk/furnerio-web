@@ -19,7 +19,7 @@ export default function CustomPopover({
   children: any;
   arrow?: string;
   hiddenArrow?: boolean;
-  sx: any;
+  sx?: any;
   [key: string]: any;
 }) {
   const { style, anchorOrigin, transformOrigin } = getPosition(

@@ -14,4 +14,9 @@ export const paths = {
   cart: {
     root: "/cart",
   },
+  product: {
+    root: `/product`,
+    checkout: `/product/checkout`,
+    details: (id:string) => `/product/${id}`,
+  },
 };

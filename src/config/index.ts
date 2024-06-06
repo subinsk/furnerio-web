@@ -1,6 +1,7 @@
 import { paths } from "@/routes/paths";
 
 export const PATH_AFTER_LOGIN = paths.home.root;
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const ASSETS_API = process.env.REACT_APP_ASSETS_API;
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

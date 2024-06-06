@@ -20,7 +20,7 @@ export default function RHFRadioGroup({
 }: {
   row: boolean;
   name: string;
-  label: string;
+  label?: string;
   options: { value: string; label: string }[];
   spacing?: number;
   helperText?: string;

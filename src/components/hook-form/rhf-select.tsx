@@ -23,7 +23,7 @@ export function RHFSelect({
   ...other
 }: {
   name: string;
-  native: boolean;
+  native?: boolean;
   maxHeight?: number;
   helperText?: string;
   children: React.ReactNode;

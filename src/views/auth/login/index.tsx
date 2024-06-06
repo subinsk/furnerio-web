@@ -2,14 +2,13 @@
 
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 // @mui
 import LoadingButton from "@mui/lab/LoadingButton";
 import Link from "@mui/material/Link";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -17,23 +16,26 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { paths } from "@/routes/paths";
 import { RouterLink } from "@/routes/components";
 // config
-import { PATH_AFTER_LOGIN } from "@/config";
 // hooks
 import { useBoolean } from "@/hooks/use-boolean";
 // auth
-// import { signIn } from "next-auth/react";
 // components
 import Iconify from "@/components/iconify";
 import FormProvider, { RHFTextField } from "@/components/hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  signInWithGithub,
+  signInWithGoogle,
+} from "@/lib/supabase/actions/login";
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
-  // router
+function JwtLoginView({ authType }: { authType: "login" | "signup" }) {
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState("");
+  const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
+  const [isSigningWithGithub, setIsSigningWithGithub] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -66,51 +68,44 @@ export default function LoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // const response = await signIn("credentials", {
-      //   email: data.email,
-      //   password: data.password,
-      //   redirect: false,
-      // });
-
-      // if (response?.error !== null) {
-      //   throw new Error(response?.error);
-      // }
-
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       reset();
-      setErrorMsg("Invalid Credentials");
+      setErrorMsg(typeof error === "string" ? error : error.message);
     }
   });
 
-  const handleGoogleLogin = async () => {
-    try {
-      // signIn("google");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleGithubLogin = async () => {
-    try {
-      // signIn("github");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleTwitterLogin = async () => {
-    try {
-      //   await loginWithTwitter?.();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Furnerio</Typography>
+      <Typography variant="h4">
+        {authType === "login" ? "Sign in" : "Sign Up"} to Furnerio
+      </Typography>
+      <Stack spacing={0.5}>
+        <LoadingButton
+          variant="outlined"
+          loading={isSigningWithGoogle}
+          loadingPosition="start"
+          startIcon={<Iconify icon="flat-color-icons:google" />}
+          onClick={() => {
+            setIsSigningWithGoogle(true);
+            signInWithGoogle();
+          }}
+        >
+          {authType === "login" ? "Sign in" : "Sign Up"} with Google
+        </LoadingButton>
+        <LoadingButton
+          variant="outlined"
+          loading={isSigningWithGithub}
+          loadingPosition="start"
+          startIcon={<Iconify icon="mdi:github" />}
+          onClick={() => {
+            setIsSigningWithGithub(true);
+            signInWithGithub();
+          }}
+        >
+          {authType === "login" ? "Sign in" : "Sign Up"} with GitHub
+        </LoadingButton>
+      </Stack>
     </Stack>
   );
 
@@ -140,8 +135,6 @@ export default function LoginView() {
       />
 
       <Link
-        component={RouterLink}
-        href={""}
         variant="body2"
         color="inherit"
         underline="always"
@@ -163,40 +156,23 @@ export default function LoginView() {
     </Stack>
   );
 
-  const renderLoginOption = (
-    <div>
-      <Divider
-        sx={{
-          my: 2.5,
-          typography: "overline",
-          color: "text.disabled",
-          "&::before, ::after": {
-            borderTopStyle: "dashed",
-          },
-        }}
-      >
-        OR
-      </Divider>
-
-      <Stack direction="row" justifyContent="center" spacing={2}>
-        <IconButton onClick={handleGoogleLogin}>
-          <Iconify icon="eva:google-fill" color="#DF3E30" />
-        </IconButton>
-
-        <IconButton color="inherit" onClick={handleGithubLogin}>
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
-      </Stack>
-    </div>
-  );
-
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}
-
-      {renderLoginOption}
     </FormProvider>
+  );
+}
+
+export default function AuthView({
+  authType = "login",
+}: {
+  authType: "login" | "signup";
+}) {
+  return (
+    <Suspense>
+      <JwtLoginView authType={authType} />
+    </Suspense>
   );
 }

@@ -35,6 +35,8 @@ import { IKContext } from "imagekitio-react";
 import { IMAGE_KIT_PUBLIC_KEY, IMAGE_KIT_URL_ENDPOINT } from "@/config";
 import { imageKitAuthenticator } from "@/lib";
 import Navbar from "@/sections/common/navbar";
+import { CartProvider } from "@/contexts/cart";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
@@ -43,6 +45,9 @@ export default function RootLayout({
   children: React.ReactNode;
   categories: any[];
 }) {
+  // hooks
+  const pathname = usePathname();
+
   return (
     <LocalizationProvider>
       <SettingsProvider
@@ -64,10 +69,14 @@ export default function RootLayout({
                   publicKey={IMAGE_KIT_PUBLIC_KEY}
                   authenticator={imageKitAuthenticator}
                 >
-                  <SettingsDrawer />
-                  <ProgressBar />
-                  <Navbar categories={categories} />
-                  {children}
+                  <CartProvider>
+                    <SettingsDrawer />
+                    <ProgressBar />
+                    {!pathname.startsWith("/auth") && (
+                      <Navbar categories={categories} />
+                    )}
+                    {children}
+                  </CartProvider>
                 </IKContext>
               </SnackbarProvider>
             </MotionLazy>
