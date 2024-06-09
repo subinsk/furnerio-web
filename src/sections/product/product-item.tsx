@@ -27,6 +27,7 @@ export default function ProductItem({
   product: {
     id: string;
     name: string;
+    slug: string;
     images: string[];
     price: number;
     mrp: number
@@ -40,12 +41,12 @@ export default function ProductItem({
 }) {
   const { onAddToCart }: any = useCheckoutContext();
 
-  const { id, name, images, price, mrp, colors, sizes, newLabel, saleLabel, quantity } =
+  const { id, slug, name, images, price, mrp, colors, sizes, newLabel, saleLabel, quantity } =
     product;
 
   const available = quantity > 0;
 
-  const linkTo = paths.product.details(id);
+  const linkTo = paths.product.details(slug);
 
   const handleAddCart = async () => {
     const newProduct = {

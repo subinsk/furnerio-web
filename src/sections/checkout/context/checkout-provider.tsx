@@ -75,7 +75,6 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         if (item.id === newItem.id) {
           return {
             ...item,
-            colors: uniq([...item.colors, ...newItem.colors]),
             quantity: item.quantity + 1,
           };
         }

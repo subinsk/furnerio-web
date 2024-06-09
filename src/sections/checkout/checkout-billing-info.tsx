@@ -6,11 +6,14 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import CardHeader from '@mui/material/CardHeader';
 // components
-import Iconify from 'src/components/iconify';
+import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutBillingInfo({ billing, onBackStep }) {
+export default function CheckoutBillingInfo({ billing, onBackStep }:{
+  billing: any;
+  onBackStep: any;
+}) {
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader

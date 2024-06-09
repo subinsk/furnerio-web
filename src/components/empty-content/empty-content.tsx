@@ -19,7 +19,7 @@ export default function EmptyContent({
   title: string;
   imgUrl?: string;
   action?: any;
-  filled: boolean;
+  filled?: boolean;
   description?: string;
   sx?: object;
 }) {

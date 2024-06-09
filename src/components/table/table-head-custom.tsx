@@ -34,13 +34,13 @@ export default function TableHeadCustom({
   sx,
 }: {
   sx?: object;
-  onSort: any;
-  orderBy: string;
+  onSort?: any;
+  orderBy?: string;
   headLabel: any;
-  rowCount: number;
-  numSelected: number;
-  onSelectAllRows: any;
-  order: string;
+  rowCount?: number;
+  numSelected?: number;
+  onSelectAllRows?: any;
+  order?: string;
 }) {
   return (
     <TableHead sx={sx}>

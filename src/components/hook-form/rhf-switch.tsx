@@ -13,7 +13,7 @@ export default function RHFSwitch({
   ...other
 }: {
   name: string;
-  helperText: string;
+  helperText?: string;
   [key: string]: any;
 }) {
   const { control } = useFormContext();

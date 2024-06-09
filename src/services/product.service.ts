@@ -2,10 +2,15 @@ import { api, endpoints, fetcher } from "@/lib/axios"
 import { useMemo } from "react";
 import useSWR from "swr";
 
-export function useGetProducts() {
-    const URL = endpoints.product;
+export function useGetProducts(params?: { categoryId?: string; }) {
+    const { categoryId } = params || {};
+    const productEndpoint = endpoints.product;
+
+    const URL = categoryId ? `${productEndpoint}?categoryId=${categoryId}` : productEndpoint;
 
     const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+    console.log('data', data)
 
     const memoizedValue = useMemo(
         () => ({
@@ -15,7 +20,7 @@ export function useGetProducts() {
             productsValidating: isValidating,
             productsEmpty: !isLoading && !data?.data.length,
         }),
-        [data?.products, error, isLoading, isValidating]
+        [data?.data, error, isLoading, isValidating]
     );
 
     return memoizedValue;
@@ -39,7 +44,7 @@ export function useGetProduct(params?: { id?: string; slug?: string }) {
             productError: error,
             productValidating: isValidating,
         }),
-        [data?.product, error, isLoading, isValidating]
+        [data?.data, error, isLoading, isValidating]
     );
 
     return memoizedValue;
@@ -59,7 +64,7 @@ export function useSearchProducts(query: string) {
             searchValidating: isValidating,
             searchEmpty: !isLoading && !data?.data.length,
         }),
-        [data?.results, error, isLoading, isValidating]
+        [data?.data, error, isLoading, isValidating]
     );
 
     return memoizedValue;

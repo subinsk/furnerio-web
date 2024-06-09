@@ -33,6 +33,7 @@ import ProductSearch from "../product-search";
 import ProductFilters from "../product-filters";
 import ProductFiltersResult from "../product-filters-result";
 import { useGetProducts, useSearchProducts } from "@/services/product.service";
+import SubCategoriesList from "@/sections/category/sub-categories";
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +47,13 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ProductShopView() {
+export default function ProductShopView({
+  categoryDetails,
+  categories,
+}: {
+  categoryDetails?: any;
+  categories?: any;
+}) {
   const settings: any = useSettingsContext();
 
   const checkout: any = useCheckoutContext();
@@ -61,7 +68,11 @@ export default function ProductShopView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  const { products, productsLoading, productsEmpty } = useGetProducts({
+    categoryId: categoryDetails?.id
+  });
+
+  console.log(products);
 
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
@@ -159,7 +170,17 @@ export default function ProductShopView() {
         mb: 15,
       }}
     >
-      <CartIcon totalItems={checkout.totalItems} />
+      {/* <CartIcon totalItems={checkout.totalItems} /> */}
+
+      <Stack width="100%" alignItems="center" px={3} py={4} spacing={2}>
+        <Typography variant="h3" gutterBottom>
+          {categoryDetails?.name}
+        </Typography>
+        <SubCategoriesList
+          categories={categories}
+          categoryDetails={categoryDetails}
+        />
+      </Stack>
 
       <Typography
         variant="h4"
@@ -167,7 +188,7 @@ export default function ProductShopView() {
           my: { xs: 3, md: 5 },
         }}
       >
-        Shop
+        Products
       </Typography>
 
       <Stack

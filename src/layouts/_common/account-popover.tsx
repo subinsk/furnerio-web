@@ -26,12 +26,8 @@ import { signOut } from "@/lib/supabase/actions/logout";
 
 const OPTIONS = [
   {
-    label: "Home",
-    linkTo: "/",
-  },
-  {
     label: "Profile",
-    linkTo: "/dashboard/user/profile",
+    linkTo: "/profile",
   },
 ];
 

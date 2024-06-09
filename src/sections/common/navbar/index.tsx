@@ -8,6 +8,7 @@ import { AccountPopover } from "@/layouts/_common";
 import { RouterLink } from "@/routes/components";
 import { NextLinkComposed } from "@/routes/components/router-link";
 import { paths } from "@/routes/paths";
+import { useCheckoutContext } from "@/sections/checkout/context";
 import {
   AppBar,
   Badge,
@@ -22,8 +23,8 @@ import {
 
 export default function Navbar({ categories }: { categories: any[] }) {
   // hooks
-  const { cart } = useCartContext();
   const user = useGetUser();
+  const checkout: any = useCheckoutContext()
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -44,9 +45,9 @@ export default function Navbar({ categories }: { categories: any[] }) {
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <IconButton
                       LinkComponent={RouterLink}
-                      href={paths.cart.root}
+                      href={paths.checkout}
                     >
-                      <Badge badgeContent={cart.length} color="primary">
+                      <Badge badgeContent={checkout.totalItems} color="error">
                         <Iconify icon="tabler:shopping-cart" />
                       </Badge>
                     </IconButton>

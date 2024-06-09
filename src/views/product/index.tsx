@@ -21,7 +21,7 @@ import EmptyContent from "@/components/empty-content";
 import { useSettingsContext } from "@/components/settings";
 import CustomBreadcrumbs from "@/components/custom-breadcrumbs";
 import { ProductDetailsSkeleton } from "@/sections/product/product-skeleton";
-import { useGetProducts } from "@/services/product.service";
+import { useGetProduct } from "@/services/product.service";
 import ProductDetailsDescription from "@/sections/product/product-details-description";
 import ProductDetailsReview from "@/sections/product/product-details-review";
 import ProductDetailsCarousel from "@/sections/product/product-details-carousel";
@@ -50,20 +50,18 @@ const SUMMARY = [
 
 // ----------------------------------------------------------------------
 
-export default function ProductShopDetailsView({ id }: { id: string }) {
+export default function ProductShopDetailsView({ slug }: { slug: string }) {
   const settings: any = useSettingsContext();
 
   const checkout: any = useCheckoutContext();
 
   const [currentTab, setCurrentTab] = useState("description");
 
-  const {
-    productDetails: product,
-    productsError: productError,
-    productsLoading: productLoading,
-    productsEmpty: productEmtpy,
-    productsValidating: productValidating,
-  } = useGetProducts({ id });
+  const {product,
+            productLoading,
+            productError,
+            productValidating,
+  } = useGetProduct({ slug });
 
   const handleChangeTab = useCallback((event: any, newValue: any) => {
     setCurrentTab(newValue);
@@ -163,7 +161,7 @@ export default function ProductShopDetailsView({ id }: { id: string }) {
             },
             {
               value: "reviews",
-              label: `Reviews (${product.reviews.length})`,
+              label: `Reviews (${product?.reviews ? product.reviews.length : 0})`,
             },
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
@@ -194,7 +192,7 @@ export default function ProductShopDetailsView({ id }: { id: string }) {
         mb: 15,
       }}
     >
-      <CartIcon totalItems={checkout.totalItems} />
+      {/* <CartIcon totalItems={checkout.totalItems} /> */}
 
       {productLoading && renderSkeleton}
 

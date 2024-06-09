@@ -46,19 +46,20 @@ export default function ProductDetailsSummary({
   const {
     id,
     name,
-    sizes,
     price,
-    coverUrl,
-    colors,
+    images,
     newLabel,
-    available,
-    priceSale,
+    mrp,
+    quantity,
     saleLabel,
     totalRatings,
     totalReviews,
     inventoryType,
     subDescription,
   } = product;
+
+  const available = quantity;
+  const image = images[0];
 
   const existProduct =
     !!items?.length && items.map((item: any) => item.id).includes(id);
@@ -72,12 +73,10 @@ export default function ProductDetailsSummary({
   const defaultValues = {
     id,
     name,
-    coverUrl,
+    image,
     available,
     price,
-    colors: colors[0],
-    size: sizes[4],
-    quantity: available < 1 ? 0 : 1,
+    quantity: 1,
   };
 
   const methods = useForm({
@@ -100,7 +99,6 @@ export default function ProductDetailsSummary({
       if (!existProduct) {
         onAddCart?.({
           ...data,
-          colors: [values.colors],
           subTotal: data.price * data.quantity,
         });
       }
@@ -115,7 +113,6 @@ export default function ProductDetailsSummary({
     try {
       onAddCart?.({
         ...values,
-        colors: [values.colors],
         subTotal: values.price * values.quantity,
       });
     } catch (error) {
@@ -125,7 +122,7 @@ export default function ProductDetailsSummary({
 
   const renderPrice = (
     <Box sx={{ typography: "h5" }}>
-      {priceSale && (
+      {price && (
         <Box
           component="span"
           sx={{
@@ -134,7 +131,7 @@ export default function ProductDetailsSummary({
             mr: 0.5,
           }}
         >
-          {fCurrency(priceSale)}
+          {fCurrency(price)}
         </Box>
       )}
 
@@ -179,59 +176,6 @@ export default function ProductDetailsSummary({
         <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
         Share
       </Link>
-    </Stack>
-  );
-
-  const renderColorOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Color
-      </Typography>
-
-      <Controller
-        name="colors"
-        control={control}
-        render={({ field }) => (
-          <ColorPicker
-            colors={colors}
-            selected={field.value}
-            onSelectColor={(color: any) => field.onChange(color)}
-            limit={4}
-          />
-        )}
-      />
-    </Stack>
-  );
-
-  const renderSizeOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Size
-      </Typography>
-
-      <RHFSelect
-        name="size"
-        size="small"
-        helperText={
-          <Link underline="always" color="textPrimary">
-            Size Chart
-          </Link>
-        }
-        sx={{
-          maxWidth: 88,
-          [`& .${formHelperTextClasses.root}`]: {
-            mx: 0,
-            mt: 1,
-            textAlign: "right",
-          },
-        }}
-      >
-        {sizes.map((size: any) => (
-          <MenuItem key={size} value={size}>
-            {size}
-          </MenuItem>
-        ))}
-      </RHFSelect>
     </Stack>
   );
 
@@ -355,10 +299,6 @@ export default function ProductDetailsSummary({
         </Stack>
 
         <Divider sx={{ borderStyle: "dashed" }} />
-
-        {renderColorOptions}
-
-        {renderSizeOptions}
 
         {renderQuantity}
 

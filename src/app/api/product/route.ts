@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const slug = searchParams.get('slug')
         const id = searchParams.get('id')
+        const categoryId = searchParams.get('categoryId')
 
         let products: any = []
 
@@ -16,9 +17,9 @@ export async function GET(request: NextRequest) {
                 where: {
                     slug: slug
                 },
-                include:{
+                include: {
                     categories: {
-                        select:{
+                        select: {
                             id: true,
                             name: true
                         }
@@ -31,9 +32,24 @@ export async function GET(request: NextRequest) {
                 where: {
                     id: id
                 },
-                include:{
+                include: {
                     categories: {
-                        select:{
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
+            });
+        }
+        else if (categoryId) {
+            products = await prisma.product.findMany({
+                where: {
+                    categoryId: categoryId
+                },
+                include: {
+                    categories: {
+                        select: {
                             id: true,
                             name: true
                         }
@@ -43,9 +59,9 @@ export async function GET(request: NextRequest) {
         }
         else {
             products = await prisma.product.findMany({
-                include:{
+                include: {
                     categories: {
-                        select:{
+                        select: {
                             id: true,
                             name: true
                         }
@@ -53,7 +69,6 @@ export async function GET(request: NextRequest) {
                 }
             });
         }
-
         return sendResponse({
             data: products,
             success: true,
@@ -72,7 +87,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
     try {
         const res: any = await request.json()
-        console.log('res: ', res)
         const {
             categoryId,
             ...rest

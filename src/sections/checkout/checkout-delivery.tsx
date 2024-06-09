@@ -8,11 +8,15 @@ import Card from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 // components
-import Iconify from 'src/components/iconify';
+import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutDelivery({ options, onApplyShipping, ...other }) {
+export default function CheckoutDelivery({ options, onApplyShipping, ...other }:{
+  options: any;
+  onApplyShipping: any;
+  [x: string]: any;
+}) {
   const { control } = useFormContext();
 
   return (
@@ -33,7 +37,7 @@ export default function CheckoutDelivery({ options, onApplyShipping, ...other })
             }}
             sx={{ p: 3 }}
           >
-            {options.map((option) => (
+            {options.map((option:any) => (
               <OptionItem
                 key={option.label}
                 option={option}

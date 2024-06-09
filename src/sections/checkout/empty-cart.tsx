@@ -11,14 +11,14 @@ export default function EmptyCart() {
       <Stack
         alignItems="center"
         justifyContent="center"
-        py={3}
+        minHeight="calc(100vh - 104px)"
       >
         <Stack spacing={2} alignItems="center">
           <Image
             src="/assets/illustrations/cart/empty-cart.svg"
             alt="empty-cart"
           />
-          <Typography variant="h5">Your Shopping Cart Is Empty!</Typography>
+          <Typography variant="h3">Your Shopping Cart Is Empty!</Typography>
           <Button
             LinkComponent={RouterLink}
             href={paths.home.root}

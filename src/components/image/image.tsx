@@ -80,7 +80,10 @@ const Image = forwardRef<HTMLSpanElement, ImageProps>(
         component={LazyLoadImage}
         // @ts-ignore
         alt={alt}
-        src={src}
+        src={
+          src ||
+          "https://ik.imagekit.io/subinsk/furnerio/common/no-image?updatedAt=1717844883874"
+        }
         afterLoad={afterLoad}
         delayTime={delayTime}
         threshold={threshold}

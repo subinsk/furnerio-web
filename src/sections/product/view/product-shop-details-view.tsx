@@ -190,7 +190,7 @@ export default function ProductShopDetailsView({ id }: { id: string }) {
         mb: 15,
       }}
     >
-      <CartIcon totalItems={checkout.totalItems} />
+      {/* <CartIcon totalItems={checkout.totalItems} /> */}
 
       {productLoading && renderSkeleton}
 

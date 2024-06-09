@@ -11,12 +11,16 @@ export const paths = {
   home: {
     root: "/",
   },
-  cart: {
-    root: "/cart",
+  about:"/about",
+  contact:"/contact",
+  faqs:"/faqs",
+  checkout: `/checkout`,
+  user:{
+    root:"/user",
+    profile:"/user/profile",
   },
   product: {
     root: `/product`,
-    checkout: `/product/checkout`,
-    details: (id:string) => `/product/${id}`,
+    details: (slug: string) => `/product/${slug}`,
   },
 };

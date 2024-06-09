@@ -25,7 +25,7 @@ export function RHFSelect({
   name: string;
   native?: boolean;
   maxHeight?: number;
-  helperText?: string;
+  helperText?: any;
   children: React.ReactNode;
   PaperPropsSx?: object;
 }) {

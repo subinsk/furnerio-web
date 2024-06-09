@@ -5,11 +5,11 @@ import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 // routes
-import { paths } from 'src/routes/paths';
+import { paths } from '@/routes/paths';
 // components
-import Iconify from 'src/components/iconify';
-import { RouterLink } from 'src/routes/components';
-import EmptyContent from 'src/components/empty-content';
+import Iconify from '@/components/iconify';
+import { RouterLink } from '@/routes/components';
+import EmptyContent from '@/components/empty-content';
 //
 import { useCheckoutContext } from './context';
 import CheckoutSummary from './checkout-summary';
@@ -18,7 +18,7 @@ import CheckoutCartProductList from './checkout-cart-product-list';
 // ----------------------------------------------------------------------
 
 export default function CheckoutCart() {
-  const checkout = useCheckoutContext();
+  const checkout:any = useCheckoutContext();
 
   const empty = !checkout.items.length;
 

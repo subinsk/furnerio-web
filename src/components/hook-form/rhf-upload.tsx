@@ -7,7 +7,9 @@ import { UploadAvatar, Upload, UploadBox } from "../upload";
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadAvatar({ name, ...other }: { name: string }) {
+export function RHFUploadAvatar({ name, ...other }: { name: string;
+  [key: string]: any;
+ }) {
   const { control } = useFormContext();
 
   return (

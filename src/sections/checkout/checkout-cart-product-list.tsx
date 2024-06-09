@@ -4,8 +4,8 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 // components
-import Scrollbar from 'src/components/scrollbar';
-import { TableHeadCustom } from 'src/components/table';
+import Scrollbar from '@/components/scrollbar';
+import { TableHeadCustom } from '@/components/table';
 //
 import CheckoutCartProduct from './checkout-cart-product';
 
@@ -26,6 +26,11 @@ export default function CheckoutCartProductList({
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
+}:{
+  products: any
+  onDelete: any
+  onIncreaseQuantity: any
+  onDecreaseQuantity: any
 }) {
   return (
     <TableContainer sx={{ overflow: 'unset' }}>
@@ -34,7 +39,7 @@ export default function CheckoutCartProductList({
           <TableHeadCustom headLabel={TABLE_HEAD} />
 
           <TableBody>
-            {products.map((row) => (
+            {products.map((row: any) => (
               <CheckoutCartProduct
                 key={row.id}
                 row={row}

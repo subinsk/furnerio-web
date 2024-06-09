@@ -35,8 +35,9 @@ import { IKContext } from "imagekitio-react";
 import { IMAGE_KIT_PUBLIC_KEY, IMAGE_KIT_URL_ENDPOINT } from "@/config";
 import { imageKitAuthenticator } from "@/lib";
 import Navbar from "@/sections/common/navbar";
-import { CartProvider } from "@/contexts/cart";
 import { usePathname } from "next/navigation";
+import Footer from "@/sections/common/footer";
+import {CheckoutProvider} from "@/sections/checkout/context"
 
 export default function RootLayout({
   children,
@@ -69,14 +70,15 @@ export default function RootLayout({
                   publicKey={IMAGE_KIT_PUBLIC_KEY}
                   authenticator={imageKitAuthenticator}
                 >
-                  <CartProvider>
+                  <CheckoutProvider>
                     <SettingsDrawer />
                     <ProgressBar />
                     {!pathname.startsWith("/auth") && (
                       <Navbar categories={categories} />
                     )}
                     {children}
-                  </CartProvider>
+                    <Footer />
+                  </CheckoutProvider>
                 </IKContext>
               </SnackbarProvider>
             </MotionLazy>

@@ -10,14 +10,19 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Dialog from '@mui/material/Dialog';
 // assets
-import { OrderCompleteIllustration } from 'src/assets/illustrations';
+import { OrderCompleteIllustration } from '@/assets/illustrations';
 // components
-import Iconify from 'src/components/iconify';
-import { varFade } from 'src/components/animate';
+import Iconify from '@/components/iconify';
+import { varFade } from '@/components/animate';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
+export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }:{
+  open: boolean;
+  onReset: any;
+  onDownloadPDF: any;
+
+}) {
   const renderContent = (
     <Stack
       spacing={5}

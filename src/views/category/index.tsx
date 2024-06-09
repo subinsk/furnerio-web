@@ -11,9 +11,10 @@ export default function CategoryView({ slug }: { slug: string }) {
     categoriesError,
     categoriesValidating,
     categoriesEmpty,
+    categoryDetails,
   } = useGetCategories({
     slug,
   });
 
-  return <ProductShopView />;
+  return categoryDetails && <ProductShopView categoryDetails={categoryDetails} categories={categories}/>;
 }
