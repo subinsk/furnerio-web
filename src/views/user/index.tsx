@@ -95,7 +95,6 @@ export default function AccountView() {
           plans={_userPlans}
           cards={_userPayment}
           invoices={_userInvoices}
-          addressBook={_userAddressBook}
         />
       )}
 

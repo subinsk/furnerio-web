@@ -93,7 +93,7 @@ function JwtLoginView({ authType }: { authType: "login" | "signup" }) {
         >
           {authType === "login" ? "Sign in" : "Sign Up"} with Google
         </LoadingButton>
-        <LoadingButton
+        {/* <LoadingButton
           variant="outlined"
           loading={isSigningWithGithub}
           loadingPosition="start"
@@ -104,7 +104,7 @@ function JwtLoginView({ authType }: { authType: "login" | "signup" }) {
           }}
         >
           {authType === "login" ? "Sign in" : "Sign Up"} with GitHub
-        </LoadingButton>
+        </LoadingButton> */}
       </Stack>
     </Stack>
   );

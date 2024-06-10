@@ -8,23 +8,37 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum AddressType {
+  home
+  work
+  other
+}
+
 model Address {
-  id        String   @id
-  street    String
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  pincode   String
+  house     String
+  street    String?
+  landmark  String?
   city      String
   state     String
   country   String
-  zip       String
-  userId    String   @unique
+  type      String  @default("home")
+  default  Boolean @default(false)
+  deliveryDays    String[] @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+  additionalInfo      String?
+  userId    String   
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   users     User     @relation(fields: [userId], references: [id])
 
   @@map("addresses")
 }
 
 model Cart {
-  id        String    @id
+  id        String    @id @default(uuid())
   userId    String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime
@@ -62,7 +76,7 @@ model Order {
 }
 
 model Product {
-  id             String   @id
+  id             String   @id @default(uuid())
   slug           String   @unique
   name           String
   sku            String   @unique
@@ -87,7 +101,7 @@ model Product {
 }
 
 model User {
-  id             String    @id
+  id             String    @id @default(uuid())
   email          String    @unique
   name           String
   phone          String?
@@ -106,7 +120,7 @@ model User {
 }
 
 model Review {
-  id        String   @id
+  id        String   @id @default(uuid())
   content   String
   rating    Int
   productId String

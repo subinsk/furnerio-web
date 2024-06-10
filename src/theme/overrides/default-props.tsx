@@ -1,3 +1,5 @@
+"use client";
+
 // components
 import Iconify from "@/components/iconify";
 import { SvgIcon, SvgIconOwnProps } from "@mui/material";
@@ -412,16 +414,16 @@ export function defaultProps(theme: { spacing: (arg0: number) => any }) {
     MuiCheckbox: {
       defaultProps: {
         size: "small",
-        icon: <CheckboxIcon component={"symbol"} />,
-        checkedIcon: <CheckboxCheckedIcon component={"symbol"} />,
-        indeterminateIcon: <CheckboxIndeterminateIcon component={"symbol"} />,
+        // icon: <CheckboxIcon component={"symbol"} />,
+        // checkedIcon: <CheckboxCheckedIcon component={"symbol"} />,
+        // indeterminateIcon: <CheckboxIndeterminateIcon component={"symbol"} />,
       },
     },
     MuiRadio: {
       defaultProps: {
         size: "small",
-        icon: <RadioIcon component={"symbol"} />,
-        checkedIcon: <RadioCheckedIcon component={"symbol"} />,
+        // icon: <RadioIcon component={"symbol"} />,
+        // checkedIcon: <RadioCheckedIcon component={"symbol"} />,
       },
     },
     MuiRating: {

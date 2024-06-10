@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 // routes
 // hooks
 import { useMockedUser } from "@/hooks/use-mocked-user";
-// auth
+import { updateUserProfile, useGetUserProfile } from '@/services/user.service';
 // components
 import { varHover } from "@/components/animate";
 import { useSnackbar } from "@/components/snackbar";
@@ -35,7 +35,8 @@ const OPTIONS = [
 
 export default function AccountPopover() {
   const router = useRouter();
-  const user = useGetUser();
+  const currentUser = useGetUser();
+  const { user, userError, userLoading, userValidating } = useGetUserProfile(currentUser?.id);
   const { enqueueSnackbar } = useSnackbar();
 
   const popover = usePopover();
@@ -76,8 +77,8 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={user?.user_metadata?.avatar_url}
-          alt={user?.user_metadata?.name}
+          src={user?.image}
+          alt={user?.name}
           sx={{
             width: 36,
             height: 36,
@@ -93,7 +94,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.user_metadata?.name}
+            {user?.name}
           </Typography>
 
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>

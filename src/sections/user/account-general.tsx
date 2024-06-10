@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -11,7 +11,8 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 // hooks
-import { useMockedUser } from '@/hooks/use-mocked-user';
+import useGetUser from "@/hooks/use-get-user";
+import { updateUserProfile, useGetUserProfile } from '@/services/user.service';
 // utils
 import { fData } from '@/utils/format-number';
 // assets
@@ -25,41 +26,30 @@ import FormProvider, {
   RHFUploadAvatar,
   RHFAutocomplete,
 } from '@/components/hook-form';
+import { imagekit } from '@/lib';
+import { slugify } from '@/utils/slugify';
 
 // ----------------------------------------------------------------------
 
 export default function AccountGeneral() {
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar} = useSnackbar();
 
-  const { user } = useMockedUser();
+  const currentUser = useGetUser()
+
+  const { user, userError, userLoading, userValidating } = useGetUserProfile(currentUser?.id);
 
   const UpdateUserSchema = Yup.object().shape({
-    displayName: Yup.string().required('Name is required'),
+    name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    photoURL: Yup.mixed().nullable().required('Avatar is required') as Yup.Schema<string | null>,
-    phoneNumber: Yup.string().required('Phone number is required'),
-    country: Yup.string().required('Country is required'),
-    address: Yup.string().required('Address is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    about: Yup.string().required('About is required'),
-    // not required
-    isPublic: Yup.boolean(),
+    image: Yup.mixed().nullable().required('Avatar is required'),
+    phone: Yup.string(),
   });
 
   const defaultValues = {
-    displayName: user?.displayName || '',
+    name: user?.name || '',
     email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
-    address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    about: user?.about || '',
-    isPublic: user?.isPublic || false,
+    image: user?.image || null,
+    phone: user?.phone || '',
   };
 
   const methods = useForm({
@@ -74,29 +64,88 @@ export default function AccountGeneral() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log('user; ', user)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
-      console.info('DATA', data);
+      const response =  await updateUserProfile({
+        id: user.id,
+        ...data,
+      });
+
+      if(response.success){
+        enqueueSnackbar('Update success!');
+      }
+      else throw new Error('Update failed!');
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('Update failed!', { variant: 'error' });
     }
   });
 
   const handleDrop = useCallback(
-    (acceptedFiles:any) => {
+    async(acceptedFiles:any) => {
       const file = acceptedFiles[0];
+
+      try {
+        const snackbarId = enqueueSnackbar("Uploading image", {
+          variant: "info",
+        });
+
+        const response = await imagekit.upload({
+          file,
+          fileName: "pfp",
+          folder: "/furnerio/user/" + user.id + "/avatar",
+          useUniqueFileName: false,          
+        });
+
+        const imageUrl = response.url;
+        
+        const editImageUserResponse = await updateUserProfile({
+          id: user.id,
+          image: imageUrl,
+        });
+
+        closeSnackbar(snackbarId)
+
+        if(editImageUserResponse.success){
+          enqueueSnackbar("Image uploaded successfully", {
+            variant: "success",
+          });
+        }
+        else throw new Error(editImageUserResponse.message)
+      } catch (error) {
+        enqueueSnackbar("Failed to upload image", {
+          variant: "error",
+        });
+      }
 
       const newFile = Object.assign(file, {
         preview: URL.createObjectURL(file),
       });
 
       if (file) {
-        setValue('photoURL', newFile, { shouldValidate: true });
+        setValue('image', newFile, { shouldValidate: true });
       }
     },
-    [setValue]
+    [enqueueSnackbar, setValue, user?.id]
   );
+
+  // effects
+  useEffect(()=>{
+    if(user){
+      setValue('name', user.name);
+      setValue('email', user.email);
+      setValue('phone', user.phone);
+      setValue('image', user.image);
+    }
+  },[setValue, user])
+
+  useEffect(()=>{
+    const id = enqueueSnackbar('Loading user data', { variant: 'info' });
+  
+    if(!userLoading){
+      closeSnackbar(id)
+    }
+  },[closeSnackbar, enqueueSnackbar, userLoading])
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -104,7 +153,7 @@ export default function AccountGeneral() {
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
             <RHFUploadAvatar
-              name="photoURL"
+              name="image"
               maxSize={3145728}
               onDrop={handleDrop}
               helperText={
@@ -123,17 +172,6 @@ export default function AccountGeneral() {
                 </Typography>
               }
             />
-
-            <RHFSwitch
-              name="isPublic"
-              labelPlacement="start"
-              label="Public Profile"
-              sx={{ mt: 5 }}
-            />
-
-            <Button variant="soft" color="error" sx={{ mt: 3 }}>
-              Delete User
-            </Button>
           </Card>
         </Grid>
 
@@ -148,47 +186,12 @@ export default function AccountGeneral() {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="displayName" label="Name" />
+              <RHFTextField name="name" label="Name" />
               <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
-              <RHFTextField name="address" label="Address" />
-
-              <RHFAutocomplete
-                name="country"
-                label="Country"
-                options={countries.map((country) => country.label)}
-                getOptionLabel={(option:any) => option}
-                renderOption={(props:any, option:any) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
-                }}
-              />
-
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
+              <RHFTextField name="phone" label="Phone Number" />
             </Box>
 
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-              <RHFTextField name="about" multiline rows={4} label="About" />
-
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>

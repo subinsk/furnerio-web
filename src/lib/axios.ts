@@ -26,7 +26,9 @@ export const fetcher = async (
 
 export const endpoints = {
   category: "/category",
-  product: "/product"
+  product: "/product",
+  user: "/user",
+  address: "/address",
 };
 
 export { api };

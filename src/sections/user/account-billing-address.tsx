@@ -15,22 +15,68 @@ import Iconify from '@/components/iconify';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 //
 import { AddressNewForm, AddressItem } from '../address';
+import EmptyContent from '@/components/empty-content';
+import { useSnackbar } from 'notistack';
+import { deleteAddress, updateAddress } from '@/services/user.service';
 
 // ----------------------------------------------------------------------
 
-export default function AccountBillingAddress({ addressBook }:{
-  addressBook: any;
-
+export default function AccountBillingAddress({ addresses, mutate }:{
+  addresses: any;
+  mutate: any
 }) {
   const [addressId, setAddressId] = useState('');
 
   const popover = usePopover();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const addressForm = useBoolean();
 
   const handleAddNewAddress = useCallback((address:any) => {
     console.info('ADDRESS', address);
   }, []);
+
+  const handleSetDefaultAddress = useCallback(async(id:any) => {
+    try{
+      const snackbarId = enqueueSnackbar("Setting address to default", { variant: "info"})
+      const payload={
+        id,
+        default: true
+      }
+
+      const response = await updateAddress(payload, { item: "default" })
+
+      closeSnackbar(snackbarId)
+
+      if(response.success){
+        enqueueSnackbar('Address set as default', { variant: 'success' });
+        mutate()
+      } else throw new Error(response.message)
+    }
+    catch(e: any){
+      enqueueSnackbar(e.message, { variant: 'error' });
+    }
+  }, [
+    enqueueSnackbar,
+closeSnackbar,
+mutate
+  ]);
+
+  const handleDeleteAddress = useCallback(async() => {
+    try{
+      const response = await deleteAddress(addressId)
+
+      if(response.success){
+        enqueueSnackbar('Address deleted successfully', { variant: 'success' });
+      } else throw new Error(response.message)
+    }
+    catch(e: any){
+      enqueueSnackbar(e.message, { variant: 'error' });
+    }
+  }, [
+    addressId,
+    enqueueSnackbar,
+  ]);
 
   const handleSelectedId = useCallback(
     (event: any, id: any) => {
@@ -63,7 +109,7 @@ export default function AccountBillingAddress({ addressBook }:{
         />
 
         <Stack spacing={2.5} sx={{ p: 3 }}>
-          {addressBook.map((address:any) => (
+          {addresses.length ? addresses.map((address:any) => (
             <AddressItem
               variant="outlined"
               key={address.id}
@@ -83,23 +129,27 @@ export default function AccountBillingAddress({ addressBook }:{
                 borderRadius: 1,
               }}
             />
-          ))}
+          )):
+          <EmptyContent title='No Addresses added yet. Please add one.'/>
+          
+          }
         </Stack>
       </Card>
 
       <CustomPopover open={popover.open} onClose={handleClose}>
         <MenuItem
           onClick={() => {
+            handleSetDefaultAddress(addressId);
             handleClose();
-            console.info('SET AS PRIMARY', addressId);
           }}
         >
           <Iconify icon="eva:star-fill" />
-          Set as primary
+          Set as default
         </MenuItem>
 
         <MenuItem
           onClick={() => {
+           addressForm.onTrue()
             handleClose();
             console.info('EDIT', addressId);
           }}
@@ -110,6 +160,7 @@ export default function AccountBillingAddress({ addressBook }:{
 
         <MenuItem
           onClick={() => {
+            handleDeleteAddress()
             handleClose();
             console.info('DELETE', addressId);
           }}
@@ -124,11 +175,12 @@ export default function AccountBillingAddress({ addressBook }:{
         open={addressForm.value}
         onClose={addressForm.onFalse}
         onCreate={handleAddNewAddress}
+        selectedAddresId={addressId}
       />
     </>
   );
 }
 
 AccountBillingAddress.propTypes = {
-  addressBook: PropTypes.array,
+  addresses: PropTypes.array,
 };

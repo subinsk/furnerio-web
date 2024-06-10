@@ -1,3 +1,5 @@
+"use client"
+
 import PropTypes from "prop-types";
 import { useFormContext, Controller } from "react-hook-form";
 // @mui

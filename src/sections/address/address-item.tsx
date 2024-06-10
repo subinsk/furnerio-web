@@ -21,8 +21,9 @@ export default function AddressItem({
   sx: any;
   [x: string]: any;
 }) {
-  const { name, fullAddress, addressType, phoneNumber, primary } = address;
+  const { name, phone, pincode, house, street, landmark, city, state, country, type, default: isDefault, deliveryDays, additionalInfo } = address;
 
+  const fullAddress = `${house}, ${street}, ${landmark}, ${city}, ${state}, ${country}, ${pincode}`;
   return (
     <Stack
       component={Paper}
@@ -43,11 +44,11 @@ export default function AddressItem({
               component="span"
               sx={{ ml: 0.5, typography: "body2", color: "text.secondary" }}
             >
-              ({addressType})
+              ({type})
             </Box>
           </Typography>
 
-          {primary && (
+          {isDefault && (
             <Label color="info" sx={{ ml: 1 }}>
               Default
             </Label>
@@ -59,7 +60,7 @@ export default function AddressItem({
         </Typography>
 
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          {phoneNumber}
+          {phone}
         </Typography>
       </Stack>
 
