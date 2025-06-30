@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import { PRODUCT_CHECKOUT_STEPS } from "@/_mock/_product";
 // components
 import { useSettingsContext } from "@/components/settings";
+import { useGetAddresses } from "@/services/user.service";
+import useGetUser from "@/hooks/use-get-user";
 //
 import { useCheckoutContext } from "../context";
 import CheckoutCart from "../checkout-cart";
@@ -20,8 +22,15 @@ import CheckoutBillingAddress from "../checkout-billing-address";
 
 export default function CheckoutView() {
   const settings: any = useSettingsContext();
+  const user = useGetUser()
 
   const checkout: any = useCheckoutContext();
+
+  const {
+    addresses
+  } = useGetAddresses({
+    userId: user?.id
+  })
 
   return (
     <Container maxWidth={settings.themeStretch ? false : "lg"} sx={{ mb: 10 }}>
@@ -51,9 +60,10 @@ export default function CheckoutView() {
         <>
           {checkout.activeStep === 0 && <CheckoutCart />}
 
-          {checkout.activeStep === 1 && <CheckoutBillingAddress />}
+          {/* {checkout.activeStep === 1 && <CheckoutBillingAddress addresses={addresses}/>} */}
+          <CheckoutBillingAddress addresses={addresses}/>
 
-          {checkout.activeStep === 2 && checkout.billing && <CheckoutPayment />}
+          {/* {checkout.activeStep === 2 && checkout.billing && <CheckoutPayment />} */}
         </>
       )}
     </Container>

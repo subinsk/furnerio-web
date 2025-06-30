@@ -1,8 +1,23 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { type NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
+
+const secret = process.env.NEXTAUTH_SECRET || ''
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  const token = await getToken({ req: request, secret })
+
+  // Protect /dashboard routes
+  if (request.nextUrl.pathname.startsWith('/dashboard') && !token) {
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  const response = NextResponse.next()
+  if (token?.email) {
+    response.headers.set('x-user-email', token.email)
+  }
+  return response
 }
 
 export const config = {

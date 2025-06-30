@@ -3,7 +3,6 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Unstable_Grid2";
 // _mock
-import { _addressBooks } from "@/_mock";
 // hooks
 import { useBoolean } from "@/hooks/use-boolean";
 // components
@@ -15,7 +14,11 @@ import { AddressNewForm, AddressItem } from "../address";
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutBillingAddress() {
+export default function CheckoutBillingAddress({
+  addresses
+}: {
+  addresses: any
+}) {
   const checkout: any = useCheckoutContext();
 
   const addressForm = useBoolean();
@@ -24,7 +27,7 @@ export default function CheckoutBillingAddress() {
     <>
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
-          {_addressBooks.slice(0, 4).map((address) => (
+          {/* {addresses.slice(0, 4).map((address: any) => (
             <AddressItem
               key={address.id}
               address={address}
@@ -51,7 +54,7 @@ export default function CheckoutBillingAddress() {
                 boxShadow: (theme: any) => theme.customShadows.card,
               }}
             />
-          ))}
+          ))} */}
 
           <Stack direction="row" justifyContent="space-between">
             <Button

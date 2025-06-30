@@ -3,15 +3,61 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum AddressType {
   home
   work
   other
+}
+
+model Organization {
+  id           String  @id @default(uuid())
+  name         String
+  subdomain    String? @unique
+  customDomain String? @unique
+  logo         String?
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  stores       Store[]
+  users        User[]
+  products     Product[]
+  orders       Order[]
+  configurations StoreConfiguration[]
+
+  @@map("organizations")
+}
+
+model Store {
+  id             String       @id @default(uuid())
+  name           String
+  organizationId String
+  isDefault      Boolean      @default(false)
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  configurations StoreConfiguration[]
+
+  @@map("stores")
+}
+
+model StoreConfiguration {
+  id             String       @id @default(uuid())
+  organizationId String
+  storeId        String?
+  category       String       // theme, payment, shipping, etc
+  settings       Json
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  store          Store?       @relation(fields: [storeId], references: [id])
+
+  @@map("store_configurations")
 }
 
 model Address {
@@ -43,17 +89,33 @@ model Cart {
   createdAt DateTime  @default(now())
   updatedAt DateTime
   users     User      @relation(fields: [userId], references: [id])
-  products  Product[] @relation("CartToProduct")
+  items     CartItem[]
 
   @@map("carts")
 }
 
+model CartItem {
+  id         String  @id @default(uuid())
+  cartId     String
+  productId  String
+  variantId  String?
+  quantity   Int
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cart       Cart    @relation(fields: [cartId], references: [id])
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@map("cart_items")
+}
+
 model Category {
   id            String     @id @default(uuid())
-  name          String     @unique
+  name          String     
   slug          String     @unique
   description   String?
   image         String?
+  organizationId String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   products      Product[]
@@ -65,14 +127,58 @@ model Category {
 }
 
 model Order {
-  id        String    @id
-  userId    String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime
-  users     User      @relation(fields: [userId], references: [id])
-  products  Product[] @relation("OrderToProduct")
+  id             String      @id @default(uuid())
+  userId         String
+  organizationId String
+  status         OrderStatus @default(pending)
+  total          Float
+  subtotal       Float
+  tax            Float?
+  shipping       Float?
+  notes          String?
+  shippingAddress Json?
+  billingAddress  Json?
+  paymentMethod   String?
+  paymentStatus   PaymentStatus @default(pending)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  users          User      @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  items          OrderItem[]
 
   @@map("orders")
+}
+
+model OrderItem {
+  id         String  @id @default(uuid())
+  orderId    String
+  productId  String
+  variantId  String?
+  quantity   Int
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  order      Order   @relation(fields: [orderId], references: [id])
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  processing
+  shipped
+  delivered
+  cancelled
+  refunded
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
 }
 
 model Product {
@@ -82,6 +188,7 @@ model Product {
   sku            String   @unique
   price          Float
   categoryId     String
+  organizationId String
   createdAt      DateTime @default(now())
   updatedAt      DateTime
   code           String?
@@ -92,12 +199,30 @@ model Product {
   quantity       Int
   saleLabel      String?
   subDescription String?
+  isActive       Boolean  @default(true)
   categories     Category @relation(fields: [categoryId], references: [id])
-  cart           Cart[]   @relation("CartToProduct")
-  orders         Order[]  @relation("OrderToProduct")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
   reviews        Review[]
+  variants       ProductVariant[]
 
   @@map("products")
+}
+
+model ProductVariant {
+  id        String  @id @default(uuid())
+  productId String
+  name      String
+  sku       String  @unique
+  price     Float
+  quantity  Int
+  attributes Json? // size, color, etc
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("product_variants")
 }
 
 model User {
@@ -107,14 +232,20 @@ model User {
   phone          String?
   password       String?
   image          String?
+  emailVerified  DateTime? @map("email_verified")
   role           Role?     @default(user)
+  organizationId String?
   created_at     DateTime  @default(now())
-  email_verified String?
-  updated_at     DateTime
+  updated_at     DateTime  @updatedAt
   addresses      Address[]
-  carts          Cart[]
+  carts          Cart?
   orders         Order[]
   reviews        Review[]
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  
+  // NextAuth relations
+  accounts       Account[]
+  sessions       Session[]
 
   @@map("users")
 }
@@ -136,4 +267,44 @@ model Review {
 enum Role {
   admin
   user
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }

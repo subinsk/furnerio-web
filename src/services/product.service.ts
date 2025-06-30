@@ -10,15 +10,12 @@ export function useGetProducts(params?: { categoryId?: string; }) {
 
     const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
-    console.log('data', data)
-
     const memoizedValue = useMemo(
         () => ({
             products: data?.data || [],
             productsLoading: isLoading,
             productsError: error,
             productsValidating: isValidating,
-            productsEmpty: !isLoading && !data?.data.length,
         }),
         [data?.data, error, isLoading, isValidating]
     );
@@ -28,41 +25,41 @@ export function useGetProducts(params?: { categoryId?: string; }) {
 
 export function useGetProduct(params?: { id?: string; slug?: string }) {
     const { id, slug } = params || {};
-    const productEndpoint = endpoints.product;
+    
+    // Use the new API endpoint format
+    const URL = slug ? `/api/products/${slug}` : id ? `/api/products/${id}` : null;
 
-    const URL = id ? `${productEndpoint}?id=${id}` : slug ? `${productEndpoint}?slug=${slug}` : productEndpoint;
-
-    const { data, isLoading, error, isValidating } = useSWR(URL, async (url) => {
-        const res = await api.get(url);
-        return res.data;
-    });
+    const { data, isLoading, error, isValidating } = useSWR(
+        URL,
+        fetcher
+    );
 
     const memoizedValue = useMemo(
         () => ({
-            product: data?.data,
+            product: data || null,
             productLoading: isLoading,
             productError: error,
             productValidating: isValidating,
         }),
-        [data?.data, error, isLoading, isValidating]
+        [data, error, isLoading, isValidating]
     );
 
     return memoizedValue;
 }
-export function useSearchProducts(query: string) {
-    const URL = query ? [endpoints.product.search, { params: { query } }] : null;
 
-    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
-        keepPreviousData: true,
-    });
+export function useGetProductsByCategorySlug(categorySlug: string) {
+    const productEndpoint = endpoints.product;
+
+    const URL = `${productEndpoint}?categorySlug=${categorySlug}`;
+
+    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
     const memoizedValue = useMemo(
         () => ({
-            searchResults: data?.data || [],
-            searchLoading: isLoading,
-            searchError: error,
-            searchValidating: isValidating,
-            searchEmpty: !isLoading && !data?.data.length,
+            products: data?.data || [],
+            productsLoading: isLoading,
+            productsError: error,
+            productsValidating: isValidating,
         }),
         [data?.data, error, isLoading, isValidating]
     );
@@ -70,33 +67,22 @@ export function useSearchProducts(query: string) {
     return memoizedValue;
 }
 
+export function useGetProductsBySearch(query: string) {
+    const productEndpoint = endpoints.product;
 
-export const createProduct = async (data: any) => {
-    const response = await api.post(endpoints.product, data)
-    return response.data
-}
+    const URL = query ? `${productEndpoint}?search=${encodeURIComponent(query)}` : null;
 
-export const getProducts = async () => {
-    const response = await api.get(endpoints.product)
-    return response.data
-}
+    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
-export const getProductById = async (id: string) => {
-    const response = await api.get(`${endpoints.product}?id=${id}`)
-    return response.data
-}
+    const memoizedValue = useMemo(
+        () => ({
+            products: data?.data || [],
+            productsLoading: isLoading,
+            productsError: error,
+            productsValidating: isValidating,
+        }),
+        [data?.data, error, isLoading, isValidating]
+    );
 
-export const updateProduct = async (data: any) => {
-    const response = await api.put(endpoints.product, data)
-    return response.data
-}
-
-export const deleteProduct = async (id: string) => {
-    const response = await api.delete(`${endpoints.product}?id=${id}`)
-    return response.data
-}
-
-export const getProductBySlug = async (slug: string) => {
-    const response = await api.get(`${endpoints.product}?slug=${slug}`)
-    return response.data
+    return memoizedValue;
 }

@@ -19,8 +19,7 @@ import { varHover } from "@/components/animate";
 import { useSnackbar } from "@/components/snackbar";
 import CustomPopover, { usePopover } from "@/components/custom-popover";
 import { useRouter } from "next/navigation";
-import useGetUser from "@/hooks/use-get-user";
-import { signOut } from "@/lib/supabase/actions/logout";
+import { useSession, signOut } from "next-auth/react";
 
 // ----------------------------------------------------------------------
 
@@ -35,16 +34,15 @@ const OPTIONS = [
 
 export default function AccountPopover() {
   const router = useRouter();
-  const currentUser = useGetUser();
-  const { user, userError, userLoading, userValidating } = useGetUserProfile(currentUser?.id);
+  const { data: session } = useSession();
+  const { user, userError, userLoading, userValidating } = useGetUserProfile(session?.user?.id);
   const { enqueueSnackbar } = useSnackbar();
 
   const popover = usePopover();
 
   const handleLogout = async () => {
     try {
-      // await logout();
-      await signOut();
+      await signOut({ redirect: false });
       popover.onClose();
       router.replace("/");
     } catch (error) {

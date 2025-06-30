@@ -7,6 +7,8 @@ export const paths = {
   auth: {
     root: ROOTS.AUTH,
     login: `${ROOTS.AUTH}/login`,
+    signup: `${ROOTS.AUTH}/signup`,
+    forgotPassword: `${ROOTS.AUTH}/forgot-password`,
   },
   home: {
     root: "/",

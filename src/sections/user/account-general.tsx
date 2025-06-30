@@ -53,7 +53,7 @@ export default function AccountGeneral() {
   };
 
   const methods = useForm({
-    resolver: yupResolver(UpdateUserSchema),
+    resolver: yupResolver(UpdateUserSchema) as any,
     defaultValues,
   });
 
@@ -64,7 +64,6 @@ export default function AccountGeneral() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('user; ', user)
     try {
       const response =  await updateUserProfile({
         id: user.id,
@@ -126,7 +125,7 @@ export default function AccountGeneral() {
         setValue('image', newFile, { shouldValidate: true });
       }
     },
-    [enqueueSnackbar, setValue, user?.id]
+    [closeSnackbar, enqueueSnackbar, setValue, user?.id]
   );
 
   // effects
@@ -142,10 +141,10 @@ export default function AccountGeneral() {
   useEffect(()=>{
     const id = enqueueSnackbar('Loading user data', { variant: 'info' });
   
-    if(!userLoading){
+    if(!userLoading && currentUser){
       closeSnackbar(id)
     }
-  },[closeSnackbar, enqueueSnackbar, userLoading])
+  },[closeSnackbar, enqueueSnackbar, userLoading, currentUser])
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>

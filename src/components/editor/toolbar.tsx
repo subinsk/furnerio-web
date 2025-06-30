@@ -1,3 +1,5 @@
+"use client"
+
 import { StyledEditorToolbar } from "./styles";
 
 // ----------------------------------------------------------------------

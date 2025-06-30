@@ -1,20 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function useGetUser() {
-  const supabase = createClient();
-
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-
-      setUser(user);
-    };
-
-    getUser();
-  }, [supabase.auth]);
-
-  return user;
+  const { data: session } = useSession();
+  return session?.user || null;
 }
